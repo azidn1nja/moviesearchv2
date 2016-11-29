@@ -1,0 +1,13 @@
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/Xamarin.iOS,Version=v1.0.AssemblyAttribute.cs
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/ibtool/_BundleResourceWithLogicalName.items
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/actool/_PartialAppManifest.items
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/actool/_BundleResourceWithLogicalName.items
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/optimized/
+/Users/Kristjan/Projects/Lab1/iOS/bin/iPhoneSimulator/Debug/Lab1.dll
+/Users/Kristjan/Projects/Lab1/iOS/bin/iPhoneSimulator/Debug/Lab1.dll.mdb
+/Users/Kristjan/Projects/Lab1/iOS/bin/iPhoneSimulator/Debug/Lab1.iOS.exe.mdb
+/Users/Kristjan/Projects/Lab1/iOS/bin/iPhoneSimulator/Debug/Lab1.iOS.exe
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/Lab1.iOS.exe
+/Users/Kristjan/Projects/Lab1/iOS/obj/iPhoneSimulator/Debug/Lab1.iOS.exe.mdb
+/Users/Kristjan/Projects/Lab1/iOS/bin/iPhoneSimulator/Debug/Newtonsoft.Json.dll
+/Users/Kristjan/Projects/Lab1/iOS/bin/iPhoneSimulator/Debug/DM.MovieApi.dll
