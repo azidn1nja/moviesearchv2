@@ -3,6 +3,8 @@ using UIKit;
 using CoreGraphics;
 using DM.MovieApi.MovieDb.Movies;
 using DM.MovieApi.ApiResponse;
+using System.Linq;
+
 
 namespace Lab1.iOS
 {
@@ -16,9 +18,12 @@ namespace Lab1.iOS
 
 		private int _yCoord;
 
+		private Movies _movies;
+
 		public MovieController()
 		{
 			MovieDbFactory.RegisterSettings(new MovieDbSettings());
+			_movies = new Movies();
 		}
 
 		public override void ViewDidLoad()
@@ -37,19 +42,30 @@ namespace Lab1.iOS
 			var findMovieButton = this.CreateButton("Find movie");
 
 			var movieLabel = this.CreateLabel();
+
+			var activityIndicator = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
+
 			findMovieButton.TouchUpInside += async (sender, args) =>
-            	{
-					movieField.ResignFirstResponder();
-					ApiSearchResponse<MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
-					movieLabel.Text = response.Results[0].Title;
-				};
+            {
+				findMovieButton.Enabled = false;
+				this.View.AddSubview(activityIndicator);
+				activityIndicator.Frame = new CGRect(HorizontalMargin, this._yCoord - 50, this.View.Bounds.Width - HorizontalMargin, 50);
+				activityIndicator.StartAnimating();
+				movieField.ResignFirstResponder();
+				ApiSearchResponse<MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
+				this._movies.Films = (from movie in response.Results
+				                select movie.Title).ToList();
+
+				this.NavigationController.PushViewController(new MovieListController(this._movies.Films), true);
+				findMovieButton.Enabled = true;
+				activityIndicator.RemoveFromSuperview();
+			};
 
 			this.View.AddSubview(prompt);
 			this.View.AddSubview(movieField);
 			this.View.AddSubview(findMovieButton);
 			this.View.AddSubview(movieLabel);
 
-			//var navigateButton = this.CreateButton("See movie list");
 		}
 
 		public override void DidReceiveMemoryWarning()
