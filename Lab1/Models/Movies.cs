@@ -4,25 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab1
+namespace Lab1.Models
 {
 	public class Movies
 	{
-		private List<string> _movies;
+		private List<MovieInfo> _movies;
 
 		public Movies()
 		{
 		}
 
-		public Movies(List<string> movies)
+		public Movies(List<MovieInfo> movies)
 		{
 			_movies = movies;
 
 		}
-		public List<string> Films
+		public List<MovieInfo> Films
 		{
-			get { return this._movies; }
-			set { this._movies = value; }
+			get { return _movies; }
+			set { _movies = value; }
 		}
 	}		
 }

@@ -4,7 +4,8 @@ using CoreGraphics;
 using DM.MovieApi.MovieDb.Movies;
 using DM.MovieApi.ApiResponse;
 using System.Linq;
-
+using Lab1.Models;
+using System.Collections.Generic;
 
 namespace Lab1.iOS
 {
@@ -49,22 +50,42 @@ namespace Lab1.iOS
             {
 				findMovieButton.Enabled = false;
 				this.View.AddSubview(activityIndicator);
-				activityIndicator.Frame = new CGRect(HorizontalMargin, this._yCoord - 50, this.View.Bounds.Width - HorizontalMargin, 50);
+				activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
 				activityIndicator.StartAnimating();
 				movieField.ResignFirstResponder();
-				ApiSearchResponse<MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
-				this._movies.Films = (from movie in response.Results
-				                select movie.Title).ToList();
-
-				this.NavigationController.PushViewController(new MovieListController(this._movies.Films), true);
+                ApiSearchResponse<DM.MovieApi.MovieDb.Movies.MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
+                this._movies.Films = (from movie in response.Results
+                                      select new Models.MovieInfo()
+                                      {
+                                          ID = movie.Id,
+                                          Title = movie.Title,
+                                          Year = movie.ReleaseDate.Year.ToString(),
+                                          Cast = ""
+                                        }).ToList();
+                foreach (Models.MovieInfo m in _movies.Films)
+                {
+                    ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(m.ID);
+                    List<MovieCastMember> list = r.Item.CastMembers.Take(3).ToList();
+                    var count = 0;
+                    while (count < list.Count)
+                    {
+                        m.Cast += list[count].Name;
+                        count += 1;
+                    }
+                    /*if (list.Count >= 3)
+                    {
+                        m.Cast = list[0].Name + ", " + list[1].Name + ", " + list[2].Name;
+                    }*/
+                }
+				NavigationController.PushViewController(new MovieListController(_movies.Films), true);
 				findMovieButton.Enabled = true;
 				activityIndicator.RemoveFromSuperview();
 			};
 
-			this.View.AddSubview(prompt);
-			this.View.AddSubview(movieField);
-			this.View.AddSubview(findMovieButton);
-			this.View.AddSubview(movieLabel);
+			View.AddSubview(prompt);
+			View.AddSubview(movieField);
+			View.AddSubview(findMovieButton);
+			View.AddSubview(movieLabel);
 
 		}
 
