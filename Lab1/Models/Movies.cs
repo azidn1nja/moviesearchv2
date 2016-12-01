@@ -8,18 +8,18 @@ namespace Lab1.Models
 {
 	public class Movies
 	{
-		private List<MovieInfo> _movies;
+		private List<MovieDTO> _movies;
 
 		public Movies()
 		{
 		}
 
-		public Movies(List<MovieInfo> movies)
+		public Movies(List<MovieDTO> movies)
 		{
 			_movies = movies;
 
 		}
-		public List<MovieInfo> Films
+		public List<MovieDTO> Films
 		{
 			get { return _movies; }
 			set { _movies = value; }

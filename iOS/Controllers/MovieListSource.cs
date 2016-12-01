@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Linq;
+
 namespace Lab1.iOS
 {
     using System.Collections.Generic;
     using Foundation;
     using UIKit;
-    using Lab1.iOS.Views;
+    using Views;
     using Models;
 
     public class MovieListSource : UITableViewSource 
 	{
 		public readonly NSString MovieListCellId = new NSString("MovieListCell");
-        private List<MovieInfo> _movieList;
+        private List<MovieDTO> _movieList;
 		private Action<int> _onSelectedPerson;
 
-		public MovieListSource(List <MovieInfo> movieList, Action<int> onSelectedPerson)
+		public MovieListSource(List <MovieDTO> movieList, Action<int> onSelectedPerson)
 		{
 			this._movieList = movieList;
 			this._onSelectedPerson = onSelectedPerson;  
@@ -28,9 +30,22 @@ namespace Lab1.iOS
 			}            
 
 			int row = indexPath.Row;
-			cell.UpdateCell(_movieList[row].Title, _movieList[row].Year, _movieList[row].Cast, _movieList[row].PosterPath);
+            cell.UpdateCell(_movieList[row].Title, _movieList[row].Year, getFirstThreeCastMembers(_movieList[row].Cast), _movieList[row].PosterPath);
 			return cell;
 		}
+
+        public string getFirstThreeCastMembers(List<string> castMembers)
+        {
+            string result = "";
+            if (castMembers != null)
+            {
+                int count = Math.Min(castMembers.Count, 3);
+                List<string> temp = (from member in castMembers
+                                     select member).Take(count).ToList();
+                result = string.Join(", ", temp);
+            }
+            return result;
+        }
 
 		public override nint RowsInSection(UITableView tableview, nint section)
 		{

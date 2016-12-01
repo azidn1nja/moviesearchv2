@@ -1,7 +1,6 @@
-﻿using System;
-using DM.MovieApi;
+﻿using DM.MovieApi;
 
-namespace Lab1
+namespace Lab1.MovieDbConnection
 {
 	public class MovieDbSettings : IMovieDbSettings
 	{

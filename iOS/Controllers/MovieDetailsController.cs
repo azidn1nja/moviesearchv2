@@ -6,14 +6,15 @@ namespace Lab1.iOS
 {
 	public class MovieDetailsController : UIViewController 
 	{
-		private MovieInfo _movie; 
-		public MovieDetailsController(MovieInfo movie)
+		private MovieDTO _movie; 
+		public MovieDetailsController(MovieDTO movie)
 		{
 			_movie = movie;
 		}
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
 
 		}
 	}

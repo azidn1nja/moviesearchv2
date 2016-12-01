@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Lab1.Models
 {
-    public class MovieInfo
+    public class MovieDTO
     {
         public int ID { get; set; }
 
@@ -14,7 +10,7 @@ namespace Lab1.Models
 
         public string Year { get; set; }
 
-        public string Cast { get; set; }
+        public List<string> Cast { get; set; }
 
         public string PosterPath { get; set; }
 
