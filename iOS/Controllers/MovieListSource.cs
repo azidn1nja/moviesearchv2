@@ -11,10 +11,12 @@ namespace Lab1.iOS
 	{
 		public readonly NSString MovieListCellId = new NSString("MovieListCell");
         private List<MovieInfo> _movieList;
+		private Action<int> _onSelectedPerson;
 
-		public MovieListSource(List <MovieInfo> movieList)
+		public MovieListSource(List <MovieInfo> movieList, Action<int> onSelectedPerson)
 		{
 			this._movieList = movieList;
+			this._onSelectedPerson = onSelectedPerson;  
 		}
 
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
@@ -33,6 +35,12 @@ namespace Lab1.iOS
 		public override nint RowsInSection(UITableView tableview, nint section)
 		{
 			return _movieList.Count;
+		}
+
+		public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+		{
+			tableView.DeselectRow(indexPath, true);
+			this._onSelectedPerson(indexPath.Row);
 		}
 
 	}

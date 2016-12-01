@@ -16,6 +16,8 @@ namespace Lab1.Models
 
         public string Cast { get; set; }
 
-        //public string ImagePath { get; set; }
+        public string PosterPath { get; set; }
+
+		public string Overview { get; set; }
     }
 }

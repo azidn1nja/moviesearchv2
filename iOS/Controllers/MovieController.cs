@@ -6,6 +6,7 @@ using DM.MovieApi.ApiResponse;
 using System.Linq;
 using Lab1.Models;
 using System.Collections.Generic;
+using MovieDownload;
 
 namespace Lab1.iOS
 {
@@ -53,14 +54,16 @@ namespace Lab1.iOS
 				activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
 				activityIndicator.StartAnimating();
 				movieField.ResignFirstResponder();
-                ApiSearchResponse<DM.MovieApi.MovieDb.Movies.MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
+				ApiSearchResponse<DM.MovieApi.MovieDb.Movies.MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
                 this._movies.Films = (from movie in response.Results
                                       select new Models.MovieInfo()
                                       {
                                           ID = movie.Id,
                                           Title = movie.Title,
                                           Year = movie.ReleaseDate.Year.ToString(),
-                                          Cast = ""
+                                          Cast = "",
+										  PosterPath = movie.PosterPath, 
+										  Overview = movie.Overview
                                         }).ToList();
                 foreach (Models.MovieInfo m in _movies.Films)
                 {
@@ -77,11 +80,11 @@ namespace Lab1.iOS
                         m.Cast = list[0].Name + ", " + list[1].Name + ", " + list[2].Name;
                     }*/
                 }
+
 				NavigationController.PushViewController(new MovieListController(_movies.Films), true);
 				findMovieButton.Enabled = true;
 				activityIndicator.RemoveFromSuperview();
 			};
-
 			View.AddSubview(prompt);
 			View.AddSubview(movieField);
 			View.AddSubview(findMovieButton);
