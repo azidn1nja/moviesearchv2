@@ -1,12 +1,8 @@
-﻿using DM.MovieApi;
-using UIKit;
+﻿using UIKit;
 using CoreGraphics;
-using DM.MovieApi.MovieDb.Movies;
-using DM.MovieApi.ApiResponse;
-using System.Linq;
 using Lab1.Models;
-using System.Collections.Generic;
-using MovieDownload;
+using Lab1.MovieDbConnection;
+using System;
 
 namespace Lab1.iOS
 {
@@ -22,75 +18,73 @@ namespace Lab1.iOS
 
 		private Movies _movies;
 
+        private MovieDbClient movieDbClient = new MovieDbClient();
+
 		public MovieController()
 		{
-			MovieDbFactory.RegisterSettings(new MovieDbSettings());
+			
 			_movies = new Movies();
 		}
 
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
 
-			this.Title = "Movie input";
-			this.View.BackgroundColor = UIColor.White;
+			Title = "Movie input";
+			View.BackgroundColor = UIColor.White;
 
-			this._yCoord = StartY;
-			var prompt = this.CreatePromptl();
+			_yCoord = StartY;
+			var prompt = CreatePromptl();
 
-			var movieField = this.CreateMovieField();
+			var movieField = CreateMovieField();
 
-			var findMovieButton = this.CreateButton("Find movie");
+			var findMovieButton = CreateButton("Find movie");
 
-			var movieLabel = this.CreateLabel();
+            var errorLabel = CreateLabel(true);
+            errorLabel.Hidden = true;
 
 			var activityIndicator = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
 
 			findMovieButton.TouchUpInside += async (sender, args) =>
             {
-				findMovieButton.Enabled = false;
-				this.View.AddSubview(activityIndicator);
-				activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
-				activityIndicator.StartAnimating();
-				movieField.ResignFirstResponder();
-				ApiSearchResponse<DM.MovieApi.MovieDb.Movies.MovieInfo> response = await movieApi.SearchByTitleAsync(movieField.Text);
-                this._movies.Films = (from movie in response.Results
-                                      select new Models.MovieInfo()
-                                      {
-                                          ID = movie.Id,
-                                          Title = movie.Title,
-                                          Year = movie.ReleaseDate.Year.ToString(),
-                                          Cast = "",
-										  PosterPath = movie.PosterPath, 
-										  Overview = movie.Overview
-                                        }).ToList();
-                foreach (Models.MovieInfo m in _movies.Films)
+                if (!string.IsNullOrEmpty(movieField.Text))
                 {
-                    ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(m.ID);
-                    List<MovieCastMember> list = r.Item.CastMembers.Take(3).ToList();
-                    var count = 0;
-                    while (count < list.Count)
-                    {
-                        m.Cast += list[count].Name;
-                        count += 1;
-                    }
-                    /*if (list.Count >= 3)
-                    {
-                        m.Cast = list[0].Name + ", " + list[1].Name + ", " + list[2].Name;
-                    }*/
+                    findMovieButton.Enabled = false;
+                    View.AddSubview(activityIndicator);
+                    activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
+                    activityIndicator.StartAnimating();
+                    movieField.ResignFirstResponder();
+                    _movies.Films = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
+
+                    NavigationController.PushViewController(new MovieListController(_movies.Films), true);
+                    findMovieButton.Enabled = true;
+                    movieField.Text = string.Empty;
+                    activityIndicator.RemoveFromSuperview();
                 }
+                else
+                {
+                    errorLabel.Text = "Searchstring is required!";
 
-				NavigationController.PushViewController(new MovieListController(_movies.Films), true);
-				findMovieButton.Enabled = true;
-				activityIndicator.RemoveFromSuperview();
-			};
-			View.AddSubview(prompt);
-			View.AddSubview(movieField);
-			View.AddSubview(findMovieButton);
-			View.AddSubview(movieLabel);
+                    errorLabel.Alpha = 0;
+                    errorLabel.Hidden = false;
+                    UIView.Animate(1, () =>
+                    {
+                        errorLabel.Alpha = 1;
+                    }, () =>
+                    {
+                        UIView.Animate(1, () =>
+                        {
+                            errorLabel.Alpha = 0.0f;
+                        });
+                    });
+                }
+            };
 
-		}
+            View.AddSubview(prompt);
+            View.AddSubview(movieField);
+            View.AddSubview(errorLabel);
+            View.AddSubview(findMovieButton);
+        }
 
 		public override void DidReceiveMemoryWarning()
 		{
@@ -116,11 +110,15 @@ namespace Lab1.iOS
 			return button;
 		}
 
-		private UILabel CreateLabel()
+		private UILabel CreateLabel(bool errorLabel)
 		{
-			var greetingLabel = new UILabel() { Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50) };
+            var label = new UILabel() { Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50) };
 			this._yCoord += StepY;
-			return greetingLabel;
+            if (errorLabel)
+            {
+                label.TextColor = UIColor.Red;
+            }
+			return label;
 		}
 
 		private UITextField CreateMovieField()

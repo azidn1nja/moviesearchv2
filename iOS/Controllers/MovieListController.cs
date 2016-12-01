@@ -2,12 +2,12 @@
 {
 	using System.Collections.Generic;
 	using UIKit;
-    using Lab1.Models;
+    using Models;
 
 	public class MovieListController : UITableViewController
 	{
-		private List<MovieInfo> _movieList;
-		public MovieListController(List <MovieInfo> movieList)
+		private List<MovieDTO> _movieList;
+		public MovieListController(List <MovieDTO> movieList)
 		{
 			_movieList = movieList;
 		}
