@@ -7,6 +7,9 @@ using System.Linq;
 using Lab1.Models;
 using System.Collections.Generic;
 using MovieDownload;
+using System.Threading;
+using System;
+using System.IO;
 
 namespace Lab1.iOS
 {
@@ -31,6 +34,12 @@ namespace Lab1.iOS
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
+
+			StorageClient storage = new StorageClient();
+			ImageDownloader downloader = new ImageDownloader(storage);
+			string localpath;
+			CancellationToken token = new CancellationToken();
+
 			var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
 
 			this.Title = "Movie input";
@@ -65,8 +74,20 @@ namespace Lab1.iOS
 										  PosterPath = movie.PosterPath, 
 										  Overview = movie.Overview
                                         }).ToList();
+
+
                 foreach (Models.MovieInfo m in _movies.Films)
                 {
+					if (m.PosterPath != null)
+					{
+						localpath = downloader.LocalPathForFilename(m.PosterPath);
+						if (!File.Exists(localpath))
+						{
+							await downloader.DownloadImage(m.PosterPath, localpath, token);
+						}
+						m.PosterPath = localpath;
+					}
+					
                     ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(m.ID);
                     List<MovieCastMember> list = r.Item.CastMembers.Take(3).ToList();
                     var count = 0;
@@ -80,7 +101,6 @@ namespace Lab1.iOS
                         m.Cast = list[0].Name + ", " + list[1].Name + ", " + list[2].Name;
                     }*/
                 }
-
 				NavigationController.PushViewController(new MovieListController(_movies.Films), true);
 				findMovieButton.Enabled = true;
 				activityIndicator.RemoveFromSuperview();
