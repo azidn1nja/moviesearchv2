@@ -133,6 +133,7 @@
     <Compile Include="Controllers\MovieListController.cs" />
     <Compile Include="Controllers\MovieListSource.cs" />
     <Compile Include="Views\CustomCell.cs" />
+    <Compile Include="Controllers\MovieDetailsController.cs" />
   </ItemGroup>
   <Import Project="..\MovieDownload\MovieDownload.projitems" Label="Shared" Condition="Exists('..\MovieDownload\MovieDownload.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

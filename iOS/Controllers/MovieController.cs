@@ -75,8 +75,7 @@ namespace Lab1.iOS
 										  Overview = movie.Overview
                                         }).ToList();
 
-
-                foreach (Models.MovieInfo m in _movies.Films)
+               	foreach (Models.MovieInfo m in _movies.Films)
                 {
 					if (m.PosterPath != null)
 					{
