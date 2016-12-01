@@ -3,6 +3,10 @@ using CoreGraphics;
 using Lab1.Models;
 using Lab1.MovieDbConnection;
 using System;
+using System.Collections.Generic;
+using MovieDownload;
+using System.Threading;
+using System.IO;
 
 namespace Lab1.iOS
 {
@@ -30,7 +34,11 @@ namespace Lab1.iOS
 		{
 			base.ViewDidLoad();
 
-			Title = "Movie input";
+            StorageClient storage = new StorageClient();
+            ImageDownloader downloader = new ImageDownloader(storage);
+            CancellationToken token = new CancellationToken();
+
+            Title = "Movie input";
 			View.BackgroundColor = UIColor.White;
 
 			_yCoord = StartY;
@@ -57,6 +65,19 @@ namespace Lab1.iOS
                     _movies.Films = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
 
                     NavigationController.PushViewController(new MovieListController(_movies.Films), true);
+                    string localpath;
+                    foreach (MovieDTO movie in _movies.Films)
+                    {
+                        if (movie.PosterPath != null)
+                        {
+                            localpath = downloader.LocalPathForFilename(movie.PosterPath);
+                            if (!File.Exists(localpath))
+                            {
+                                await downloader.DownloadImage(movie.PosterPath, localpath, token);
+                            }
+                            movie.PosterPath = localpath;
+                        }
+                    }
                     findMovieButton.Enabled = true;
                     movieField.Text = string.Empty;
                     activityIndicator.RemoveFromSuperview();

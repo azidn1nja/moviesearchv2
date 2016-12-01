@@ -30,7 +30,7 @@ namespace Lab1.iOS
 			}            
 
 			int row = indexPath.Row;
-            cell.UpdateCell(_movieList[row].Title, _movieList[row].Year, getFirstThreeCastMembers(_movieList[row].Cast));
+            cell.UpdateCell(_movieList[row].Title, _movieList[row].Year, getFirstThreeCastMembers(_movieList[row].Cast), _movieList[row].PosterPath);
 			return cell;
 		}
 
