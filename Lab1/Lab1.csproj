@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Models\MovieDetailsDTO.cs" />
     <Compile Include="Models\MovieDTO.cs" />
     <Compile Include="MovieDbConnection\MovieDbClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

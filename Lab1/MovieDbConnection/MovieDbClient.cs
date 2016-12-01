@@ -4,6 +4,7 @@ using DM.MovieApi.MovieDb.Movies;
 using Lab1.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lab1.MovieDbConnection
 {
@@ -17,7 +18,7 @@ namespace Lab1.MovieDbConnection
             movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
         }
 
-        public async System.Threading.Tasks.Task<List<MovieDTO>> getAllMoviesMatchingString(string searchString)
+        public async Task<List<MovieDTO>> getAllMoviesMatchingString(string searchString)
         {
             ApiSearchResponse<MovieInfo> response = await movieApi.SearchByTitleAsync(searchString);
             List<MovieDTO> results = (from movie in response.Results
@@ -32,17 +33,40 @@ namespace Lab1.MovieDbConnection
                                       }).ToList();
             foreach (MovieDTO movie in results)
             {
-                ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(movie.ID);
-                List<MovieCastMember> list = r.Item.CastMembers.ToList();
-                if (list != null)
-                {
-                    foreach (var member in list)
-                    {
-                        movie.Cast.Add(member.Name);
-                    }
-                }
+                movie.Cast = await getMovieCastMembersByMovieID(movie.ID);
             }
             return results;
+        }
+
+        public async Task<MovieDetailsDTO> getMovieDetailsByID(int ID)
+        {
+            ApiQueryResponse<Movie> response = await movieApi.FindByIdAsync(ID);
+            Movie movie = response.Item;
+            MovieDetailsDTO movieDetails = new MovieDetailsDTO()
+            {
+                Title = movie.Title,
+                Year = movie.ReleaseDate.Year.ToString(),
+                Cast = await getMovieCastMembersByMovieID(ID),
+                PosterPath = movie.PosterPath,
+                Overview = movie.Overview,
+                Runtime = movie.Runtime.ToString()
+            };
+            return movieDetails;
+        }
+
+        private async Task<List<string>> getMovieCastMembersByMovieID(int movieID)
+        {
+            ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(movieID);
+            List<MovieCastMember> list = r.Item.CastMembers.ToList();
+            List<string> cast = new List<string>();
+            if (list != null)
+            {
+                foreach (var member in list)
+                {
+                    cast.Add(member.Name);
+                }
+            }
+            return cast;
         }
     }
 }
