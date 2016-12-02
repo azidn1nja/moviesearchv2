@@ -63,9 +63,8 @@ namespace Lab1.iOS
                     activityIndicator.StartAnimating();
                     movieField.ResignFirstResponder();
                     _movies.Films = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
-
-                    NavigationController.PushViewController(new MovieListController(_movies.Films), true);
                     string localpath;
+
                     foreach (MovieDTO movie in _movies.Films)
                     {
                         if (movie.PosterPath != null)
@@ -78,6 +77,8 @@ namespace Lab1.iOS
                             movie.PosterPath = localpath;
                         }
                     }
+
+					NavigationController.PushViewController(new MovieListController(_movies.Films), true);
                     findMovieButton.Enabled = true;
                     movieField.Text = string.Empty;
                     activityIndicator.RemoveFromSuperview();
@@ -130,7 +131,6 @@ namespace Lab1.iOS
 			this._yCoord += StepY;
 			return button;
 		}
-
 		private UILabel CreateLabel(bool errorLabel)
 		{
             var label = new UILabel() { Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50) };

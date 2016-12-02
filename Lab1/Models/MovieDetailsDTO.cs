@@ -16,5 +16,6 @@ namespace Lab1.Models
 
         public string Runtime { get; set; }
 
+		public List<string> Genres { get; set; }
     }
 }

@@ -49,7 +49,9 @@ namespace Lab1.MovieDbConnection
                 Cast = await getMovieCastMembersByMovieID(ID),
                 PosterPath = movie.PosterPath,
                 Overview = movie.Overview,
-                Runtime = movie.Runtime.ToString()
+                Runtime = movie.Runtime.ToString(),
+				Genres = (from genre in movie.Genres
+				          select genre.Name).ToList()			               
             };
             return movieDetails;
         }
