@@ -4,9 +4,6 @@
 	using UIKit;
 	using Models;
 	using MovieDbConnection;
-	using MovieDownload;
-	using System.Threading;
-	using System.IO;
 
 	public class MovieListController : UITableViewController
 	{
@@ -27,6 +24,10 @@
 		private async void OnSelectedMovie(int row)
 		{
             MovieDetailsDTO movie = await MovieDbClient.getMovieDetailsByID(_movieList[row].ID);
+            if (movie == null)
+            {
+                return;
+            }
             movie.PosterPath = _movieList[row].PosterPath;
             NavigationController.PushViewController(new MovieDetailsController(movie), true);
         }

@@ -4,7 +4,6 @@ using Lab1.Models;
 using Lab1.MovieDbConnection;
 using MovieDownload;
 using System.Threading;
-using System.IO;
 using System.Collections.Generic;
 
 namespace Lab1.iOS.Controllers
@@ -49,7 +48,9 @@ namespace Lab1.iOS.Controllers
 
 			View.BackgroundColor = UIColor.White;
 
-			_yCoord = StartY;
+            NavigationController.NavigationBar.Translucent = true;
+
+            _yCoord = StartY;
 
             var logoView = SetupLogo();
 
@@ -68,7 +69,7 @@ namespace Lab1.iOS.Controllers
                 {
                     findMovieButton.Enabled = false;
                     View.AddSubview(activityIndicator);
-                    activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
+                    activityIndicator.Frame = new CGRect((UIScreen.MainScreen.Bounds.Width/2) - 25, UIScreen.MainScreen.Bounds.Height * 0.7, 50, 50);
                     activityIndicator.StartAnimating();
                     movieField.ResignFirstResponder();
                     _movies = await MovieDbClient.getAllMoviesMatchingString(movieField.Text);
