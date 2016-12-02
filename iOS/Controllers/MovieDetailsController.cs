@@ -1,12 +1,6 @@
-﻿using System;
-using UIKit;
+﻿using UIKit;
 using CoreGraphics;
 using Lab1.Models;
-using Lab1.MovieDbConnection;
-using MovieDownload;
-using System.Threading;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Lab1.iOS.Controllers
 {

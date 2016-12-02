@@ -1,11 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MovieDownload;
-using System.Threading;
-using System.IO;
-using Foundation;
 using UIKit;
 using Lab1.Models;
 using Lab1.MovieDbConnection;
@@ -40,7 +33,7 @@ namespace Lab1.iOS.Controllers
             {
                 var activityIndicator = new UIActivityIndicatorView(UIActivityIndicatorViewStyle.Gray);
                 View.AddSubview(activityIndicator);
-                activityIndicator.Frame = new CGRect(100, 100, 50, 50);
+                activityIndicator.Frame = new CGRect((UIScreen.MainScreen.Bounds.Width / 2) - 25, (UIScreen.MainScreen.Bounds.Height * 0.30) - 25, 50, 50);
                 activityIndicator.StartAnimating();
                 _movieList = await MovieDbClient.getTopRatedMovies();
                 await ImageSaver.getMoviePosters(_movieList);
@@ -59,6 +52,10 @@ namespace Lab1.iOS.Controllers
         private async void OnSelectedMovie(int row)
         {
             MovieDetailsDTO movie = await MovieDbClient.getMovieDetailsByID(_movieList[row].ID);
+            if (movie == null)
+            {
+                return;
+            }
             movie.PosterPath = _movieList[row].PosterPath;
             NavigationController.PushViewController(new MovieDetailsController(movie), true);
         }

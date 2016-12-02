@@ -17,6 +17,10 @@ namespace Lab1.MovieDbConnection
             var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
 
             ApiSearchResponse<MovieInfo> response = await movieApi.SearchByTitleAsync(searchString);
+            if (response.Results == null)
+            {
+                return new List<MovieDTO>();
+            }
             List<MovieDTO> results = (from movie in response.Results
                                       select new MovieDTO()
                                       {
@@ -40,12 +44,15 @@ namespace Lab1.MovieDbConnection
             var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
 
             ApiQueryResponse<Movie> response = await movieApi.FindByIdAsync(ID);
+            if (response.Item == null)
+            {
+                return null;
+            }
             Movie movie = response.Item;
             MovieDetailsDTO movieDetails = new MovieDetailsDTO()
             {
                 Title = movie.Title,
                 Year = movie.ReleaseDate.Year.ToString(),
-                Cast = await getMovieCastMembersByMovieID(ID),
                 PosterPath = movie.PosterPath,
                 Overview = movie.Overview,
                 Runtime = movie.Runtime.ToString(),
@@ -61,6 +68,10 @@ namespace Lab1.MovieDbConnection
             var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
 
             ApiSearchResponse<MovieInfo> response = await movieApi.GetTopRatedAsync();
+            if (response.Results == null)
+            {
+                return new List<MovieDTO>();
+            }
             List<MovieDTO> results = (from movie in response.Results
                                       select new MovieDTO()
                                       {

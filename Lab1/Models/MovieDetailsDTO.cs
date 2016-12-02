@@ -8,8 +8,6 @@ namespace Lab1.Models
 
         public string Year { get; set; }
 
-        public List<string> Cast { get; set; }
-
         public string PosterPath { get; set; }
 
         public string Overview { get; set; }
