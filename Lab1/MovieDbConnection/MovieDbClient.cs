@@ -8,18 +8,14 @@ using System.Threading.Tasks;
 
 namespace Lab1.MovieDbConnection
 {
-    public class MovieDbClient
+    public static class MovieDbClient
     {
-        private IApiMovieRequest movieApi;
 
-        public MovieDbClient()
+        public static async Task<List<MovieDTO>> getAllMoviesMatchingString(string searchString)
         {
             MovieDbFactory.RegisterSettings(new MovieDbSettings());
-            movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
-        }
+            var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
 
-        public async Task<List<MovieDTO>> getAllMoviesMatchingString(string searchString)
-        {
             ApiSearchResponse<MovieInfo> response = await movieApi.SearchByTitleAsync(searchString);
             List<MovieDTO> results = (from movie in response.Results
                                       select new MovieDTO()
@@ -38,8 +34,11 @@ namespace Lab1.MovieDbConnection
             return results;
         }
 
-        public async Task<MovieDetailsDTO> getMovieDetailsByID(int ID)
+        public static async Task<MovieDetailsDTO> getMovieDetailsByID(int ID)
         {
+            MovieDbFactory.RegisterSettings(new MovieDbSettings());
+            var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
+
             ApiQueryResponse<Movie> response = await movieApi.FindByIdAsync(ID);
             Movie movie = response.Item;
             MovieDetailsDTO movieDetails = new MovieDetailsDTO()
@@ -56,8 +55,11 @@ namespace Lab1.MovieDbConnection
             return movieDetails;
         }
 
-        public async Task<List<MovieDTO>> getTopRatedMovies()
+        public static async Task<List<MovieDTO>> getTopRatedMovies()
         {
+            MovieDbFactory.RegisterSettings(new MovieDbSettings());
+            var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
+
             ApiSearchResponse<MovieInfo> response = await movieApi.GetTopRatedAsync();
             List<MovieDTO> results = (from movie in response.Results
                                       select new MovieDTO()
@@ -76,8 +78,11 @@ namespace Lab1.MovieDbConnection
             return results;
         }
 
-        private async Task<List<string>> getMovieCastMembersByMovieID(int movieID)
+        private static async Task<List<string>> getMovieCastMembersByMovieID(int movieID)
         {
+            MovieDbFactory.RegisterSettings(new MovieDbSettings());
+            var movieApi = MovieDbFactory.Create<IApiMovieRequest>().Value;
+
             ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(movieID);
             if (r.Item == null)
             {

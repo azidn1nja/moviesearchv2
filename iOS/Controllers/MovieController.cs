@@ -21,13 +21,10 @@ namespace Lab1.iOS.Controllers
 
 		private List<MovieDTO> _movies;
 
-        private MovieDbClient movieDbClient;
-
 		public MovieController(List<MovieDTO> movies)
 		{
             TabBarItem = new UITabBarItem(UITabBarSystemItem.Search, 0);
             _movies = movies;
-            movieDbClient = new MovieDbClient();
 		}
 
         public override void ViewWillAppear(bool animated)
@@ -74,7 +71,7 @@ namespace Lab1.iOS.Controllers
                     activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
                     activityIndicator.StartAnimating();
                     movieField.ResignFirstResponder();
-                    _movies = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
+                    _movies = await MovieDbClient.getAllMoviesMatchingString(movieField.Text);
                     await ImageSaver.getMoviePosters(_movies);
 					NavigationController.PushViewController(new MovieListController(_movies), true);
                     findMovieButton.Enabled = true;

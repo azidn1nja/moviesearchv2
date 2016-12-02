@@ -26,10 +26,10 @@
 
 		private async void OnSelectedMovie(int row)
 		{
-			MovieDbClient movieDbClient = new MovieDbClient();
-			MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieList[row].ID);
-			movie.PosterPath = _movieList[row].PosterPath;
-			NavigationController.PushViewController(new MovieDetailsController(movie), true);
-		}
+            MovieDetailsDTO movie = await MovieDbClient.getMovieDetailsByID(_movieList[row].ID);
+            movie.PosterPath = _movieList[row].PosterPath;
+            NavigationController.PushViewController(new MovieDetailsController(movie), true);
+        }
+
 	}
 }
