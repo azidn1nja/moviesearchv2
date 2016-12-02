@@ -56,16 +56,23 @@ namespace Lab1.MovieDbConnection
             return movieDetails;
         }
 
-        private async Task<List<string>> getMovieCastMembersByMovieID(int movieID)
-        {
-            ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(movieID);
+		private async Task<List<string>> getMovieCastMembersByMovieID(int movieID)
+		{
+			ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(movieID);
+			if (r.Item == null)
+			{
+				return new List<string>();
+			}
             List<MovieCastMember> list = r.Item.CastMembers.ToList();
             List<string> cast = new List<string>();
             if (list != null)
             {
                 foreach (var member in list)
                 {
-                    cast.Add(member.Name);
+					if (member != null) 
+					{ 
+						cast.Add(member.Name);
+					}
                 }
             }
             return cast;
