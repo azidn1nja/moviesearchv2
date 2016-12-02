@@ -1,5 +1,8 @@
 ﻿using Foundation;
 using UIKit;
+using Lab1.iOS.Controllers;
+using System.Collections.Generic;
+using Lab1.Models;
 
 namespace Lab1.iOS
 {
@@ -23,10 +26,22 @@ namespace Lab1.iOS
 
 			this.Window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-			var controller = new MovieController();
-			this.Window.RootViewController = new UINavigationController(controller);
+            List<MovieDTO> movieList = new List<MovieDTO>();
+			var movieController = new Controllers.MovieController(movieList);
+            var movieNavigationController = new UINavigationController(movieController);
 
-			this.Window.MakeKeyAndVisible();
+            List<MovieDTO> topMovieList = new List<MovieDTO>();
+            var topMovieController = new TopRatedController(topMovieList);
+            var topMovieNavigationController = new UINavigationController(topMovieController);
+
+            var tabBarController = new TabBarController()
+            {
+                ViewControllers = new UIViewController[] { movieNavigationController, topMovieNavigationController}
+            };
+
+            this.Window.RootViewController = tabBarController;
+
+            this.Window.MakeKeyAndVisible();
 			return true;
 		}
 

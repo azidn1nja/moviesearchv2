@@ -56,16 +56,43 @@ namespace Lab1.MovieDbConnection
             return movieDetails;
         }
 
+        public async Task<List<MovieDTO>> getTopRatedMovies()
+        {
+            ApiSearchResponse<MovieInfo> response = await movieApi.GetTopRatedAsync();
+            List<MovieDTO> results = (from movie in response.Results
+                                      select new MovieDTO()
+                                      {
+                                          ID = movie.Id,
+                                          Title = movie.Title,
+                                          Year = movie.ReleaseDate.Year.ToString(),
+                                          Cast = new List<string>(),
+                                          PosterPath = movie.PosterPath,
+                                          Overview = movie.Overview
+                                      }).ToList();
+            foreach (MovieDTO movie in results)
+            {
+                movie.Cast = await getMovieCastMembersByMovieID(movie.ID);
+            }
+            return results;
+        }
+
         private async Task<List<string>> getMovieCastMembersByMovieID(int movieID)
         {
             ApiQueryResponse<MovieCredit> r = await movieApi.GetCreditsAsync(movieID);
+            if (r.Item == null)
+            {
+                return new List<string>();
+            }
             List<MovieCastMember> list = r.Item.CastMembers.ToList();
             List<string> cast = new List<string>();
             if (list != null)
             {
                 foreach (var member in list)
                 {
-                    cast.Add(member.Name);
+                    if (member != null)
+                    {
+                        cast.Add(member.Name);
+                    }
                 }
             }
             return cast;

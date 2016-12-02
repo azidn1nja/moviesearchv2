@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Lab1.iOS
+namespace Lab1.iOS.Controllers
 {
     using System.Collections.Generic;
     using Foundation;

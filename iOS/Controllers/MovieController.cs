@@ -5,8 +5,9 @@ using Lab1.MovieDbConnection;
 using MovieDownload;
 using System.Threading;
 using System.IO;
+using System.Collections.Generic;
 
-namespace Lab1.iOS
+namespace Lab1.iOS.Controllers
 {
 	public partial class MovieController : UIViewController
 	{
@@ -18,25 +19,36 @@ namespace Lab1.iOS
 
 		private int _yCoord;
 
-		private Movies _movies;
+		private List<MovieDTO> _movies;
 
-        private MovieDbClient movieDbClient = new MovieDbClient();
+        private MovieDbClient movieDbClient;
 
-		public MovieController()
+		public MovieController(List<MovieDTO> movies)
 		{
-			
-			_movies = new Movies();
+            TabBarItem = new UITabBarItem(UITabBarSystemItem.Search, 0);
+            _movies = movies;
+            movieDbClient = new MovieDbClient();
 		}
 
-		public override void ViewDidLoad()
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            NavigationController.SetNavigationBarHidden(true, true);
+        }
+
+        public override void ViewWillDisappear(bool animated)
+        {
+            base.ViewWillDisappear(animated);
+            NavigationController.SetNavigationBarHidden(false, true);
+        }
+
+        public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
             StorageClient storage = new StorageClient();
             ImageDownloader downloader = new ImageDownloader(storage);
             CancellationToken token = new CancellationToken();
-
-            NavigationController.SetNavigationBarHidden(true, true);
 
 			View.BackgroundColor = UIColor.White;
 
@@ -62,10 +74,10 @@ namespace Lab1.iOS
                     activityIndicator.Frame = new CGRect(HorizontalMargin, _yCoord - 50, View.Bounds.Width - HorizontalMargin, 50);
                     activityIndicator.StartAnimating();
                     movieField.ResignFirstResponder();
-                    _movies.Films = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
+                    _movies = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
                     string localpath;
 
-                    foreach (MovieDTO movie in _movies.Films)
+                    foreach (MovieDTO movie in _movies)
                     {
                         if (movie.PosterPath != null)
                         {
@@ -77,17 +89,13 @@ namespace Lab1.iOS
                             movie.PosterPath = localpath;
                         }
                     }
-					NavigationController.PushViewController(new MovieListController(_movies.Films), true);
+					NavigationController.PushViewController(new MovieListController(_movies), true);
                     findMovieButton.Enabled = true;
                     movieField.Text = string.Empty;
                     activityIndicator.RemoveFromSuperview();
                 }
                 else
                 {
-                    errorLabel.Text = "Searchstring is required!";
-
-                    errorLabel.Alpha = 0;
-                    errorLabel.Hidden = false;
                     UIView.Animate(1, () =>
                     {
                         logoView.Layer.BorderColor = new CGColor(244, 44, 44, 0.9f);

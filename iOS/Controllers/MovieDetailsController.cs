@@ -8,22 +8,22 @@ using System.Threading;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Lab1.iOS
+namespace Lab1.iOS.Controllers
 {
 	public class MovieDetailsController : UIViewController 
 	{
 		private int _movieid;
-		MovieDbClient movieApi;
 		private const int HorizontalMargin = 20;
 		private const int StartY = 80;
 		private const int StepY = 50;
 		private int _yCoord;
+        private MovieDbClient movieDbClient;
 
 		public MovieDetailsController(int movieID)
 		{
 			_movieid = movieID;
 			_yCoord = StartY;
-			movieApi = new MovieDbClient();
+            movieDbClient = new MovieDbClient();
 		}
 		public async override void ViewDidLoad()
 		{
@@ -36,7 +36,7 @@ namespace Lab1.iOS
 			CancellationToken token = new CancellationToken();
 			string localpath;
 
-			MovieDetailsDTO movie = await movieApi.getMovieDetailsByID(_movieid);
+			MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieid);
 
 			string titleYear = movie.Title + " (" + movie.Year + ")";
 

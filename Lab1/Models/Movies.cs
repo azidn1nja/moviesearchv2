@@ -17,7 +17,6 @@ namespace Lab1.Models
 		public Movies(List<MovieDTO> movies)
 		{
 			_movies = movies;
-
 		}
 		public List<MovieDTO> Films
 		{
