@@ -2,7 +2,11 @@
 {
 	using System.Collections.Generic;
 	using UIKit;
-    using Models;
+	using Models;
+	using MovieDbConnection;
+	using MovieDownload;
+	using System.Threading;
+	using System.IO;
 
 	public class MovieListController : UITableViewController
 	{
@@ -20,10 +24,27 @@
 			TableView.Source = new MovieListSource(_movieList, OnSelectedMovie);
 		}
 
-		private void OnSelectedMovie(int row)
+		private async void OnSelectedMovie(int row)
 		{
+			MovieDbClient movieDbClient = new MovieDbClient();
+			StorageClient storage = new StorageClient();
+			ImageDownloader downloader = new ImageDownloader(storage);
+			CancellationToken token = new CancellationToken();
+			string localpath;
 
-			NavigationController.PushViewController(new MovieDetailsController(_movieList[row].ID), true);
+			MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieList[row].ID);
+
+
+			if (!string.IsNullOrEmpty(movie.PosterPath))
+			{
+				localpath = downloader.LocalPathForFilename(movie.PosterPath);
+				if (!File.Exists(localpath))
+				{
+					await downloader.DownloadImage(movie.PosterPath, localpath, token);
+				}
+				movie.PosterPath = localpath;
+			}
+			NavigationController.PushViewController(new MovieDetailsController(movie), true);
 		}
 	}
 }

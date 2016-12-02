@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using MovieDownload;
+using System.Threading;
+using System.IO;
 using Foundation;
 using UIKit;
 using Lab1.Models;
@@ -56,9 +58,27 @@ namespace Lab1.iOS.Controllers
             TableView.Source = null;
         }
 
-        private void OnSelectedMovie(int row)
+        private async void OnSelectedMovie(int row)
         {
-            NavigationController.PushViewController(new MovieDetailsController(_movieList[row].ID), true);
+            MovieDbClient movieDbClient = new MovieDbClient();
+            StorageClient storage = new StorageClient();
+            ImageDownloader downloader = new ImageDownloader(storage);
+            CancellationToken token = new CancellationToken();
+            string localpath;
+
+            MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieList[row].ID);
+
+
+            if (!string.IsNullOrEmpty(movie.PosterPath))
+            {
+                localpath = downloader.LocalPathForFilename(movie.PosterPath);
+                if (!File.Exists(localpath))
+                {
+                    await downloader.DownloadImage(movie.PosterPath, localpath, token);
+                }
+                movie.PosterPath = localpath;
+            }
+            NavigationController.PushViewController(new MovieDetailsController(movie), true);
         }
     }
 }
