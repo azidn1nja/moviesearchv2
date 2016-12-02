@@ -14,8 +14,8 @@ namespace Lab1.iOS.Controllers
 	{
 		private int _movieid;
 		private const int HorizontalMargin = 20;
-		private const int StartY = 80;
-		private const int StepY = 50;
+		private const int StartY = 50;
+		private const int StepY = 170;
 		private int _yCoord;
         private MovieDbClient movieDbClient;
 
@@ -38,20 +38,6 @@ namespace Lab1.iOS.Controllers
 
 			MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieid);
 
-			string titleYear = movie.Title + " (" + movie.Year + ")";
-
-			UILabel titleLabel = CreateTitle(titleYear);
-			string genreConcat = "";
-			if (movie.Genres != null)
-			{
-				genreConcat = string.Join(", ", movie.Genres);
-			}
-			string genreRuntime = movie.Runtime + " Min | " + genreConcat;
-
-			UILabel genreRuntimeLabel = CreateGenreRuntimeLabel(genreRuntime);
-
-			UILabel overviewLabel = CreateOverviewLabel(movie.Overview);
-
 			UIImageView posterLabel;
 			if (!string.IsNullOrEmpty(movie.PosterPath))
 			{
@@ -64,6 +50,34 @@ namespace Lab1.iOS.Controllers
 				posterLabel = CreateImage(movie.PosterPath);
 				View.AddSubview(posterLabel);
 			}
+
+			string titleYear = movie.Title + " (" + movie.Year + ")";
+
+			UILabel titleLabel = CreateTitle(titleYear);
+
+			UILabel overviewLabel = CreateOverviewLabel(movie.Overview);
+
+			string genreConcat = "";
+			string genreRuntime = "";
+			if (movie.Genres != null)
+			{
+				genreConcat = string.Join(", ", movie.Genres);
+				if (!string.IsNullOrEmpty(movie.Runtime))
+				{
+					genreRuntime = movie.Runtime + " Min | " + genreConcat;
+				}
+				else
+				{
+					genreRuntime = genreConcat;
+				}
+			}
+			else 
+			{
+				genreRuntime = movie.Runtime;
+			}
+
+			UILabel genreRuntimeLabel = CreateGenreRuntimeLabel(genreRuntime);
+
 			View.AddSubview(titleLabel);
 			View.AddSubview(genreRuntimeLabel);
 			View.AddSubview(overviewLabel);
@@ -73,7 +87,7 @@ namespace Lab1.iOS.Controllers
 		{
 			UIImageView posterView = new UIImageView();
 			posterView.Image  = UIImage.FromFile(posterpath);
-			posterView.Frame = new CGRect(10, _yCoord, View.Bounds.Width - 255, 35);
+			posterView.Frame = new CGRect(200, 80, View.Bounds.Width - 220, 150);
 			return posterView;
 
 		}
@@ -81,19 +95,25 @@ namespace Lab1.iOS.Controllers
 		{
 			var titleLabel = new UILabel()
 			{
-				Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50),
-				Text = titleYear
+				Frame = new CGRect(HorizontalMargin * 2, this._yCoord + 20, this.View.Bounds.Width - 205, 100),
+				Text = titleYear,
+				Lines = 4,
+				Highlighted = true,
+				TextAlignment = UITextAlignment.Center
 			};
-			this._yCoord += StepY;
+			this._yCoord = 240;
 			return titleLabel;
 		}
 		private UILabel CreateGenreRuntimeLabel(string genreRuntime) 
 		{ 
 			var genrerunLabel = new UILabel()
 			{
-				Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50),
-				Text = genreRuntime
+				Frame = new CGRect(HorizontalMargin, 198, 150, 50),
+				Text = genreRuntime,
+				TextAlignment = UITextAlignment.Center,
+				Highlighted = true
 			};
+			genrerunLabel.Font = UIFont.FromName("HelveticaNeue-Italic", 11);
 			this._yCoord += StepY;
 			return genrerunLabel;				
 		}
@@ -101,10 +121,15 @@ namespace Lab1.iOS.Controllers
 		{
 			var overviewLabel = new UILabel()
 			{
-				Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50),
-				Text = overview
+				Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width-30, 100),
+				Text = overview,
+				Lines = 10 
+					
 			};
+			overviewLabel.Font = UIFont.FromName("AppleSDGothicNeo-Light", 10);
 			this._yCoord += StepY;
+
+
 			return overviewLabel;
 		}
 
