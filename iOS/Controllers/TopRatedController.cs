@@ -16,14 +16,12 @@ namespace Lab1.iOS.Controllers
     class TopRatedController : UITableViewController
     {
         private List<MovieDTO> _movieList;
-        private MovieDbClient movieDbCLient;
         private bool fromTabController;
 
         public TopRatedController(List<MovieDTO> movieList)
         {
             TabBarItem = new UITabBarItem(UITabBarSystemItem.Favorites, 0);
             _movieList = movieList;
-            movieDbCLient = new MovieDbClient();
             fromTabController = false;
         }
 
@@ -44,7 +42,7 @@ namespace Lab1.iOS.Controllers
                 View.AddSubview(activityIndicator);
                 activityIndicator.Frame = new CGRect(100, 100, 50, 50);
                 activityIndicator.StartAnimating();
-                _movieList = await movieDbCLient.getTopRatedMovies();
+                _movieList = await MovieDbClient.getTopRatedMovies();
                 await ImageSaver.getMoviePosters(_movieList);
                 TableView.Source = new MovieListSource(_movieList, OnSelectedMovie);
                 activityIndicator.RemoveFromSuperview();
@@ -60,24 +58,8 @@ namespace Lab1.iOS.Controllers
 
         private async void OnSelectedMovie(int row)
         {
-            MovieDbClient movieDbClient = new MovieDbClient();
-            StorageClient storage = new StorageClient();
-            ImageDownloader downloader = new ImageDownloader(storage);
-            CancellationToken token = new CancellationToken();
-            string localpath;
-
-            MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieList[row].ID);
-
-
-            if (!string.IsNullOrEmpty(movie.PosterPath))
-            {
-                localpath = downloader.LocalPathForFilename(movie.PosterPath);
-                if (!File.Exists(localpath))
-                {
-                    await downloader.DownloadImage(movie.PosterPath, localpath, token);
-                }
-                movie.PosterPath = localpath;
-            }
+            MovieDetailsDTO movie = await MovieDbClient.getMovieDetailsByID(_movieList[row].ID);
+            movie.PosterPath = _movieList[row].PosterPath;
             NavigationController.PushViewController(new MovieDetailsController(movie), true);
         }
     }

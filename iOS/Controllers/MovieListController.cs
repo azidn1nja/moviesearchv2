@@ -26,25 +26,9 @@
 
 		private async void OnSelectedMovie(int row)
 		{
-			MovieDbClient movieDbClient = new MovieDbClient();
-			StorageClient storage = new StorageClient();
-			ImageDownloader downloader = new ImageDownloader(storage);
-			CancellationToken token = new CancellationToken();
-			string localpath;
-
-			MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieList[row].ID);
-
-
-			if (!string.IsNullOrEmpty(movie.PosterPath))
-			{
-				localpath = downloader.LocalPathForFilename(movie.PosterPath);
-				if (!File.Exists(localpath))
-				{
-					await downloader.DownloadImage(movie.PosterPath, localpath, token);
-				}
-				movie.PosterPath = localpath;
-			}
-			NavigationController.PushViewController(new MovieDetailsController(movie), true);
-		}
+            MovieDetailsDTO movie = await MovieDbClient.getMovieDetailsByID(_movieList[row].ID);
+            movie.PosterPath = _movieList[row].PosterPath;
+            NavigationController.PushViewController(new MovieDetailsController(movie), true);
+        }
 	}
 }
