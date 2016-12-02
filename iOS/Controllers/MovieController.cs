@@ -2,8 +2,6 @@
 using CoreGraphics;
 using Lab1.Models;
 using Lab1.MovieDbConnection;
-using System;
-using System.Collections.Generic;
 using MovieDownload;
 using System.Threading;
 using System.IO;
@@ -14,7 +12,7 @@ namespace Lab1.iOS
 	{
 		private const int HorizontalMargin = 20;
 
-		private const int StartY = 80;
+		private const int StartY = 180;
 
 		private const int StepY = 50;
 
@@ -38,15 +36,17 @@ namespace Lab1.iOS
             ImageDownloader downloader = new ImageDownloader(storage);
             CancellationToken token = new CancellationToken();
 
-            Title = "Movie input";
+            NavigationController.SetNavigationBarHidden(true, true);
+
 			View.BackgroundColor = UIColor.White;
 
 			_yCoord = StartY;
-			var prompt = CreatePromptl();
+
+            var logoView = SetupLogo();
 
 			var movieField = CreateMovieField();
 
-			var findMovieButton = CreateButton("Find movie");
+			var findMovieButton = CreateButton("Search");
 
             var errorLabel = CreateLabel(true);
             errorLabel.Hidden = true;
@@ -77,7 +77,6 @@ namespace Lab1.iOS
                             movie.PosterPath = localpath;
                         }
                     }
-
 					NavigationController.PushViewController(new MovieListController(_movies.Films), true);
                     findMovieButton.Enabled = true;
                     movieField.Text = string.Empty;
@@ -91,18 +90,17 @@ namespace Lab1.iOS
                     errorLabel.Hidden = false;
                     UIView.Animate(1, () =>
                     {
-                        errorLabel.Alpha = 1;
+                        logoView.Layer.BorderColor = new CGColor(244, 44, 44, 0.9f);
                     }, () =>
                     {
                         UIView.Animate(1, () =>
                         {
-                            errorLabel.Alpha = 0.0f;
+                            logoView.Layer.BorderColor = new CGColor(0, 0, 0, 0.5f);
                         });
                     });
                 }
             };
-
-            View.AddSubview(prompt);
+            View.AddSubview(logoView);
             View.AddSubview(movieField);
             View.AddSubview(errorLabel);
             View.AddSubview(findMovieButton);
@@ -113,22 +111,24 @@ namespace Lab1.iOS
 			base.DidReceiveMemoryWarning();
 			// Release any cached data, images, etc that aren't in use.
 		}
-		private UILabel CreatePromptl()
-		{
-			var prompt = new UILabel()
-			{
-				Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width, 50),
-				Text = "Enter name of the movie: "
-			};
-			this._yCoord += StepY;
-			return prompt;
-		}
 		private UIButton CreateButton(string title)
 		{
-			var button = UIButton.FromType(UIButtonType.RoundedRect);
-			button.Frame = new CGRect(HorizontalMargin, this._yCoord, this.View.Bounds.Width - 15 * HorizontalMargin, 50);
-			button.SetTitle(title, UIControlState.Normal);
-			this._yCoord += StepY;
+			var button = new Button();
+            double buttonWidth = UIScreen.MainScreen.Bounds.Width * 0.9;
+            double buttonLeftMargin = UIScreen.MainScreen.Bounds.Width * 0.05;
+            double buttonTopMargin = UIScreen.MainScreen.Bounds.Width * 0.9;
+            button.Frame = new CGRect(buttonLeftMargin, buttonTopMargin, buttonWidth, 50);
+
+            button.Layer.BorderWidth = 1;
+            button.Layer.BorderColor = new CGColor(0, 0, 0, 0.5f);
+            button.Layer.CornerRadius = 5;
+
+            button.SetTitleColor(UIColor.FromRGBA(0, 0, 0, 0.8f), UIControlState.Normal);
+            button.SetTitleColor(UIColor.White, UIControlState.Highlighted);
+            button.SetTitleColor(UIColor.FromRGBA(0, 0, 0, 0.3f), UIControlState.Disabled);
+
+            button.SetTitle(title, UIControlState.Normal);
+            button.Font = UIFont.FromName("AppleSDGothicNeo-Light", 18);
 			return button;
 		}
 		private UILabel CreateLabel(bool errorLabel)
@@ -144,20 +144,34 @@ namespace Lab1.iOS
 
 		private UITextField CreateMovieField()
 		{
-			var movieField = new UITextField()
+            double fieldWidth = UIScreen.MainScreen.Bounds.Width * 0.9;
+            double fieldLeftMargin = UIScreen.MainScreen.Bounds.Width * 0.05;
+            double fieldTopMargin = UIScreen.MainScreen.Bounds.Width * 0.7;
+            var movieField = new UITextField()
 			{
-				Frame =
-										new CGRect(
-											HorizontalMargin,
-											this._yCoord,
-											this.View.Bounds.Width - 16 * HorizontalMargin,
-											50),
+				Frame = new CGRect(fieldLeftMargin, fieldTopMargin, fieldWidth, 50),
 				BorderStyle = UITextBorderStyle.RoundedRect,
-				Placeholder = "Movie Title"
+				Placeholder = "Movie Title",
+                TextAlignment = UITextAlignment.Center
 			};
 			this._yCoord += StepY;
 			return movieField;
 		}
+
+        private UIImageView SetupLogo()
+        {
+            var logoView = new UIImageView();
+            logoView.Image = UIImage.FromFile("logo");
+            // We want the logo to be 90% of the screen
+            double logoWidth = UIScreen.MainScreen.Bounds.Width * 0.90;
+            // and then a 5% margin on either side
+            double logoLeftMargin = UIScreen.MainScreen.Bounds.Width * 0.05;
+            // we want it a top margin of 30%
+            double logoTopMargin = UIScreen.MainScreen.Bounds.Height * 0.3;
+            logoView.Frame = new CGRect(logoLeftMargin, logoTopMargin, logoWidth, logoWidth * 0.1833);
+
+            return logoView;
+        }
 	}
 }
 

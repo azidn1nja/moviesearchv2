@@ -13,8 +13,8 @@
 		}
 		public override void ViewDidLoad()
 		{
-			View.BackgroundColor = UIColor.White;
-			Title = "MovieList";
+            NavigationController.SetNavigationBarHidden(false, true);
+            View.BackgroundColor = UIColor.White;
 			TableView.Source = new MovieListSource(_movieList, OnSelectedPerson);
 		}
 

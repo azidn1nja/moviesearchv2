@@ -15,12 +15,12 @@ namespace Lab1.iOS.Views
             this._titleYearLabel = new UILabel
             {
                 Font = UIFont.FromName("AppleSDGothicNeo-Regular", 16f),
-                TextColor = UIColor.FromRGB(85, 5, 0)
+                TextColor = UIColor.FromRGBA(0, 0, 0, 0.8f)
             };
             this._topCastLabel = new UILabel
             {
                 Font = UIFont.FromName("AppleSDGothicNeo-UltraLight", 10f),
-                TextColor = UIColor.FromRGB(85, 5, 0)
+                TextColor = UIColor.FromRGBA(0, 0, 0, 0.5f)
             };
 			ContentView.AddSubviews(new UIView[] {this._posterView, this._titleYearLabel, this._topCastLabel });
         }
