@@ -75,20 +75,7 @@ namespace Lab1.iOS.Controllers
                     activityIndicator.StartAnimating();
                     movieField.ResignFirstResponder();
                     _movies = await movieDbClient.getAllMoviesMatchingString(movieField.Text);
-                    string localpath;
-
-                    foreach (MovieDTO movie in _movies)
-                    {
-                        if (movie.PosterPath != null)
-                        {
-                            localpath = downloader.LocalPathForFilename(movie.PosterPath);
-                            if (!File.Exists(localpath))
-                            {
-                                await downloader.DownloadImage(movie.PosterPath, localpath, token);
-                            }
-                            movie.PosterPath = localpath;
-                        }
-                    }
+                    await ImageSaver.getMoviePosters(_movies);
 					NavigationController.PushViewController(new MovieListController(_movies), true);
                     findMovieButton.Enabled = true;
                     movieField.Text = string.Empty;
