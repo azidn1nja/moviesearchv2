@@ -11,10 +11,24 @@ namespace Lab1.iOS.Controllers
         {
             base.ViewDidLoad();
 
-            this.TabBar.BackgroundColor = UIColor.LightGray;
-            this.TabBar.TintColor = UIColor.Red;
+            ViewControllerSelected += (sender, args) =>
+            {
+                var controller = args.ViewController;
+                if (controller.GetType() == typeof(UINavigationController))
+                {
+                    var controller2 = (UINavigationController)controller;
+                    if (controller2.TopViewController.GetType() == typeof(TopRatedController))
+                    {
+                        var controller3 = (TopRatedController)controller2.TopViewController;
+                        controller3.refreshList();
+                    }
+                }
+            };
 
-            this.SelectedIndex = 0;
+            TabBar.BackgroundColor = UIColor.LightGray;
+            TabBar.TintColor = UIColor.Red;
+
+            SelectedIndex = 0;
         }
     }
 }

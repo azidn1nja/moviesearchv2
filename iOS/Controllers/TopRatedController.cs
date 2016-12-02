@@ -43,10 +43,17 @@ namespace Lab1.iOS.Controllers
                 activityIndicator.Frame = new CGRect(100, 100, 50, 50);
                 activityIndicator.StartAnimating();
                 _movieList = await movieDbCLient.getTopRatedMovies();
+                await ImageSaver.getMoviePosters(_movieList);
                 TableView.Source = new MovieListSource(_movieList, OnSelectedMovie);
                 activityIndicator.RemoveFromSuperview();
                 fromTabController = false;
             }
+        }
+
+        public void refreshList()
+        {
+            fromTabController = true;
+            TableView.Source = null;
         }
 
         private void OnSelectedMovie(int row)
