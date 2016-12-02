@@ -12,45 +12,30 @@ namespace Lab1.iOS.Controllers
 {
 	public class MovieDetailsController : UIViewController 
 	{
-		private int _movieid;
+		private MovieDetailsDTO movie;
 		private const int HorizontalMargin = 20;
 		private const int StartY = 50;
 		private const int StepY = 170;
 		private int _yCoord;
-        private MovieDbClient movieDbClient;
 
-		public MovieDetailsController(int movieID)
+		public MovieDetailsController(MovieDetailsDTO movie)
 		{
-			_movieid = movieID;
+			this.movie = movie;
 			_yCoord = StartY;
-            movieDbClient = new MovieDbClient();
 		}
-		public async override void ViewDidLoad()
+		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 			Title = "Movie info";
 			View.BackgroundColor = UIColor.White;
 
-			StorageClient storage = new StorageClient();
-			ImageDownloader downloader = new ImageDownloader(storage);
-			CancellationToken token = new CancellationToken();
-			string localpath;
 
-			MovieDetailsDTO movie = await movieDbClient.getMovieDetailsByID(_movieid);
-
-			UIImageView posterLabel;
 			if (!string.IsNullOrEmpty(movie.PosterPath))
 			{
-				localpath = downloader.LocalPathForFilename(movie.PosterPath);
-				if (!File.Exists(localpath))
-				{
-					await downloader.DownloadImage(movie.PosterPath, localpath, token);
-				}
-				movie.PosterPath = localpath;
+				UIImageView posterLabel;
 				posterLabel = CreateImage(movie.PosterPath);
 				View.AddSubview(posterLabel);
 			}
-
 			string titleYear = movie.Title + " (" + movie.Year + ")";
 
 			UILabel titleLabel = CreateTitle(titleYear);
