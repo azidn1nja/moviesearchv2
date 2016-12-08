@@ -41,11 +41,6 @@ namespace Lab1.iOS.Controllers
         public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-
-            StorageClient storage = new StorageClient();
-            ImageDownloader downloader = new ImageDownloader(storage);
-            CancellationToken token = new CancellationToken();
-
 			View.BackgroundColor = UIColor.White;
 
             NavigationController.NavigationBar.Translucent = true;

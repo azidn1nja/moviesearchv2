@@ -1,26 +1,44 @@
-﻿using Android.App;
+﻿using System;
+using Android.App;
 using Android.Widget;
+using Android.Runtime;
 using Android.OS;
+using Android.Content;
+using Android.Views;
 
 namespace Lab1.Droid
 {
+	using System.Collections.Generic;
+	using Android.Hardware.Input;
+	using Android.Views.InputMethods;
+	using Lab1.Models;
+	using Lab1.MovieDbConnection;
+
 	[Activity(Label = "Lab1", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : Activity
 	{
-		int count = 1;
-
-		protected override void OnCreate(Bundle savedInstanceState)
+		private  List<MovieDTO> _movies;
+		protected override void OnCreate(Bundle bundle)
 		{
-			base.OnCreate(savedInstanceState);
+			base.OnCreate(bundle);
 
 			// Set our view from the "main" layout resource
-			SetContentView(Resource.Layout.Main);
+			this.SetContentView(Resource.Layout.Main);
 
 			// Get our button from the layout resource,
 			// and attach an event to it
-			Button button = FindViewById<Button>(Resource.Id.myButton);
+			var button = this.FindViewById<Button>(Resource.Id.movieNameButton);
 
-			button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
+			var searchText = this.FindViewById<EditText>(Resource.Id.searchText);
+
+			var promptTextView = this.FindViewById<TextView>(Resource.Id.promptTextView);
+
+			button.Click += (sender, args) =>
+		    {
+			   var manager = (InputMethodManager)this.GetSystemService(InputMethodService);
+			   manager.HideSoftInputFromWindow(searchText.WindowToken, 0);
+			   var movies = MovieDbClient.getAllMoviesMatchingString(searchText.Text);
+			};				
 		}
 	}
 }
