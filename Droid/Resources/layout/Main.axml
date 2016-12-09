@@ -1,4 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
-	<Button android:id="@+id/myButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/hello" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp">
+  <include
+        layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+  <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/logo"
+        android:src="@drawable/logo"
+        android:layout_marginTop="100px"
+        android:layout_gravity="center" />
+    <EditText
+        android:id="@+id/movieEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logo"
+        android:hint="Movie Title" />
+    <Button
+        android:id="@+id/findMovieButton"
+        android:textAllCaps="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/movieEditText"
+        android:text="Search" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:keepScreenOn="true"
+        android:layout_below="@id/findMovieButton"
+        android:layout_centerInParent="true"
+        android:id="@+id/progressBar" />
 </LinearLayout>

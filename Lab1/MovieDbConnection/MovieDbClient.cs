@@ -10,7 +10,6 @@ namespace Lab1.MovieDbConnection
 {
     public static class MovieDbClient
     {
-
         public static async Task<List<MovieDTO>> getAllMoviesMatchingString(string searchString)
         {
             MovieDbFactory.RegisterSettings(new MovieDbSettings());
