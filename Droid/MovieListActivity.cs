@@ -12,18 +12,22 @@ using Lab1.MovieDbConnection;
 namespace Lab1.Droid
 {
     [Activity(Theme = "@style/MovieSearchTheme", Label = "Movie List")]
-    public class MovieListActivity : ListActivity
+    public class MovieListActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
+            SetContentView(Resource.Layout.MovieList);
+
             // Create your application here
             var jsonStr = Intent.GetStringExtra("movieList");
             var movies = JsonConvert.DeserializeObject<List<MovieDTO>>(jsonStr);
-            this.ListAdapter = new MovieListAdapter(this, movies);
 
-            ListView.ItemClick += async (sender, e) =>
+            var listView = FindViewById<ListView>(Resource.Id.movielistview);
+            listView.Adapter = new MovieListAdapter(this, movies);
+
+            listView.ItemClick += async (sender, e) =>
             {
                 MovieDetailsDTO movie = await MovieDbClient.getMovieDetailsByID(movies[e.Position].ID);
 
