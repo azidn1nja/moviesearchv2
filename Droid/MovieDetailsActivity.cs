@@ -33,6 +33,10 @@ namespace Lab1.Droid
             FindViewById<TextView>(Resource.Id.runtimeAndGenres).Text = movie.Runtime + " Min | " + string.Join(" ,", movie.Genres);
 
             Picasso.With(this).Load("http://image.tmdb.org/t/p/w500" + movie.PosterPath).Into(FindViewById<ImageView>(Resource.Id.poster));
+
+            var toolbar = this.FindViewById<Toolbar>(Resource.Id.toolbar);
+            this.SetActionBar(toolbar);
+            this.ActionBar.Title = "Details";
         }
     }
 }

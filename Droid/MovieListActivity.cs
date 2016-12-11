@@ -35,6 +35,10 @@ namespace Lab1.Droid
                 intent.PutExtra("movieDetails", JsonConvert.SerializeObject(movie));
                 StartActivity(intent);
             };
+
+            var toolbar = this.FindViewById<Toolbar>(Resource.Id.toolbar);
+            this.SetActionBar(toolbar);
+            this.ActionBar.Title = "List";
         }
     }
 }

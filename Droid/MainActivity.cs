@@ -33,21 +33,36 @@ namespace Lab1.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+            var topRatedFragment = new TopRatedFragment();
+            var movieSearchFragment = new MovieSearchInputFragment();
+
             var fragments = new Android.Support.V4.App.Fragment[]
                 {
-                    new MovieSearchInputFragment()
+                    movieSearchFragment,
+                    topRatedFragment
                 };
-            var titles = CharSequence.ArrayFromStringArray(new[]{"Movies"});
-
+            var titles = CharSequence.ArrayFromStringArray(new[]{"Search", "Top Rated"});
             var viewPager = this.FindViewById<ViewPager>(Resource.Id.viewpager);
             viewPager.Adapter = new TabsFragmentPagerAdapter(SupportFragmentManager, fragments, titles);
 
             var tabLayout = this.FindViewById<TabLayout>(Resource.Id.sliding_tabs);
             tabLayout.SetupWithViewPager(viewPager);
 
+            tabLayout.TabSelected += async (sender, args) =>
+            {
+                viewPager.SetCurrentItem(args.Tab.Position, true);
+
+                var tab = args.Tab;
+                if (tab.Position == 1)
+                {
+                    movieSearchFragment.hideInput();
+                    await topRatedFragment.LoadTopRatedMovies();
+                }
+            };
+
             var toolbar = this.FindViewById<Toolbar>(Resource.Id.toolbar);
             this.SetActionBar(toolbar);
-            this.ActionBar.Title = GetString(Resource.String.ToolbarTitle);
+            this.ActionBar.Title = "MovieSearch";
         }
 	}
 }
